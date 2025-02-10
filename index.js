@@ -1,6 +1,6 @@
 let bugs = [];
 const MAX_ENERGY = 5;
-const DIAMETER = 5
+const DIAMETER = 5;
 const LIGHT_RADIUS = 20;
 
 function setup() {
@@ -8,11 +8,9 @@ function setup() {
     frameRate(20);
 
     for (let i = 0; i < 5000; i++) {
-        light = random() < 0.1;
+        light = random() < 0.05;
         bugs.push(new Lightbug(random(windowWidth), random(windowHeight), DIAMETER, light, 'yellow', random(MAX_ENERGY)));
     }
-
-    bugs[0].color = 'red';
 }
 
 function draw() {
@@ -34,7 +32,7 @@ function draw() {
     bugs.forEach(lightbug => {
         let litNeighbors = getLitNeighbors(lightbug);
         let tempBug = new Lightbug(lightbug.x, lightbug.y, lightbug.diameter, lightbug.on, lightbug.color, lightbug.energy);
-        if (litNeighbors.length >= 1 && lightbug.energy >= MAX_ENERGY - 2) {
+        if (litNeighbors.length >= 1 && lightbug.energy >= MAX_ENERGY) {
             tempBug.on = true;
             tempBug.energy--;
         } else if (lightbug.on && lightbug.energy > 0) {
