@@ -7,9 +7,11 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     frameRate(20);
 
+    let colors = ['red', 'green', 'blue']
+
     for (let i = 0; i < 5000; i++) {
         light = random() < 0.05;
-        bugs.push(new Lightbug(random(windowWidth), random(windowHeight), DIAMETER, light, 'yellow', random(MAX_ENERGY)));
+        bugs.push(new Lightbug(random(windowWidth), random(windowHeight), DIAMETER, light, random(colors), random(MAX_ENERGY)));
     }
 }
 
@@ -31,7 +33,12 @@ function draw() {
     let tempBugs = [];
     bugs.forEach(lightbug => {
         let litNeighbors = getLitNeighbors(lightbug);
-        let tempBug = new Lightbug(lightbug.x, lightbug.y, lightbug.diameter, lightbug.on, lightbug.color, lightbug.energy);
+        let majorityColor = getMajorityColor(litNeighbors);
+        if (typeof majorityColor == 'undefined') {
+            majorityColor = lightbug.color;
+        }
+
+        let tempBug = new Lightbug(lightbug.x, lightbug.y, lightbug.diameter, lightbug.on, majorityColor, lightbug.energy);
         if (litNeighbors.length >= 1 && lightbug.energy >= MAX_ENERGY) {
             tempBug.on = true;
             tempBug.energy--;
@@ -65,6 +72,30 @@ function getLitNeighbors(bug) {
         }
     });
     return neighbors;
+}
+
+function getMajorityColor(neighbors) {
+    color_count = {};
+    neighbors.forEach(neighbor => {
+        
+        if (neighbor.color in color_count) {
+            color_count[neighbor.color] ++;
+        } else {
+            color_count[neighbor.color] = 1;
+        }
+
+    })
+
+    let maxKey, maxValue = 0;
+
+    for(const [key, value] of Object.entries(color_count)) {
+
+    if(value > maxValue) {
+        maxValue = value;
+        maxKey = key;
+    }
+    }
+    return maxKey
 }
 
 class Lightbug {
