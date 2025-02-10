@@ -7,7 +7,7 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     frameRate(20);
 
-    let colors = ['red', 'green', 'blue']
+    let colors = ['#FF0000', '#00FF00', '#0000FF']
 
     for (let i = 0; i < 5000; i++) {
         light = random() < 0.05;
@@ -20,7 +20,9 @@ function draw() {
 
     bugs.forEach(lightbug => {
         if (lightbug.on) {
-            fill(lightbug.color);
+            let c = color(lightbug.color)
+            c.setAlpha(255*(lightbug.energy/MAX_ENERGY));
+            fill(c);
             ellipse(lightbug.x, lightbug.y, lightbug.diameter);
         }
         else {
@@ -38,7 +40,7 @@ function draw() {
             majorityColor = lightbug.color;
         }
 
-        let tempBug = new Lightbug(lightbug.x, lightbug.y, lightbug.diameter, lightbug.on, majorityColor, lightbug.energy);
+        let tempBug = new Lightbug(lightbug.x+(random(-1,1)), lightbug.y+(random(-1,1)), lightbug.diameter, lightbug.on, majorityColor, lightbug.energy);
         if (litNeighbors.length >= 1 && lightbug.energy >= MAX_ENERGY) {
             tempBug.on = true;
             tempBug.energy--;
