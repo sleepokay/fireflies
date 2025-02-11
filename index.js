@@ -6,15 +6,19 @@ let chartCanvas;
 let chartData = {};
 let activeCounts = {};
 
+let mX = 0;
+let mY = 0;
+let mouseIsPressed = false;
+
 const MAX_ENERGY = 8;
 const DIAMETER = 5;
-const LIGHT_RADIUS = 30;
+const LIGHT_RADIUS = 25;
 const GRID_SIZE = 2 * LIGHT_RADIUS + 5;
 const CHART_HEIGHT = 100;
 const CHART_WIDTH = 300;
 const TOTAL_BUGS = 6000;
 const STARTING_ACTIVE = 0.005;
-const RANDOM_WALK_SCALE = 1;
+const RANDOM_WALK_SCALE = 2;
 
 let colorSets = [
     ['#D3DD55'],
@@ -104,6 +108,28 @@ function initializeBugs() {
 }
 
 function update() {
+    if (mouseIsPressed) {
+        let mX = Math.floor(mouseX / GRID_SIZE);
+        let mY = Math.floor(mouseY / GRID_SIZE);
+
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                let newCol = mX + i;
+                let newRow = mY + j;
+                if (newCol >= 0 && newCol < grid.length && newRow >= 0 && newRow < grid[0].length) {
+                    grid[newCol][newRow].forEach(lightbug => {
+                        let distance = dist(mouseX, mouseY, lightbug.x, lightbug.y);
+                        if (distance < LIGHT_RADIUS) {
+                            lightbug.active = true;
+                            lightbug.energy = MAX_ENERGY-1;
+                        }
+                    });
+                }
+            }
+        }
+        mouseIsPressed = false;
+    }
+
     for (let i = 0; i < bugs.length; i++) {
         let lightbug = bugs[i];
         let litNeighbors = getLitNeighbors(lightbug);
@@ -227,6 +253,18 @@ function drawChart() {
     });
 
     image(chartCanvas, 0, windowHeight - CHART_HEIGHT);
+}
+
+function mousePressed(event) {
+    let cnv = document.querySelector('canvas');
+
+    if (event.target !== cnv) {
+        return;
+    }
+
+    mX = mouseX;
+    mY = mouseY;
+    mouseIsPressed = true;
 }
 
 class Lightbug {
