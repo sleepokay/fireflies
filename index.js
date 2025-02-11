@@ -10,19 +10,22 @@ let mX = 0;
 let mY = 0;
 let mouseIsPressed = false;
 
-const MAX_ENERGY = 8;
+const MAX_ENERGY = 1;
 const DIAMETER = 5;
-const LIGHT_RADIUS = 25;
+const LIGHT_RADIUS = 27;
 const GRID_SIZE = 2 * LIGHT_RADIUS + 5;
 const CHART_HEIGHT = 100;
 const CHART_WIDTH = 300;
-const TOTAL_BUGS = 6000;
+const TOTAL_BUGS = 5000;
 const STARTING_ACTIVE = 0.005;
 const RANDOM_WALK_SCALE = 2;
+const DRAIN_RATE = 0.1;
+const RECOVERY_RATE = 0.08;
 
 let colorSets = [
     ['#D3DD55'],
     ['#F40', '#1D3', '#06F'],
+    ['#F93827', '#FF9D23', '#EFE63A', '#16C47F', '#0079FF', '#8538F7']
 ];
 let currentColorSetIndex = 0;
 let colors = colorSets[currentColorSetIndex];
@@ -121,7 +124,7 @@ function update() {
                         let distance = dist(mouseX, mouseY, lightbug.x, lightbug.y);
                         if (distance < LIGHT_RADIUS) {
                             lightbug.active = true;
-                            lightbug.energy = MAX_ENERGY-1;
+                            lightbug.energy = MAX_ENERGY-DRAIN_RATE;
                         }
                     });
                 }
@@ -148,15 +151,15 @@ function update() {
         if (litNeighbors.length >= 1 && lightbug.energy >= MAX_ENERGY) {
             nextBug.active = true;
             nextBug.energy = MAX_ENERGY;
-            nextBug.energy--;
+            nextBug.energy -= DRAIN_RATE;
         } 
         else if (lightbug.active && lightbug.energy > 0) {
             nextBug.active = true;
-            nextBug.energy--;
+            nextBug.energy -= DRAIN_RATE;
         } 
         else if (!lightbug.active && lightbug.energy < MAX_ENERGY) {
             nextBug.active = false;
-            nextBug.energy += 1.5;
+            nextBug.energy += RECOVERY_RATE;
         } 
         else if (lightbug.energy <= 0) {
             nextBug.active = false;
