@@ -41,7 +41,8 @@ function setup() {
     CHART_WIDTH = chartDiv.elt.clientWidth;
     chartCanvas = createGraphics(CHART_WIDTH, CHART_HEIGHT);
     chartCanvas.parent("chart");
-    chartCanvas.style('display', 'block');
+    chartCanvas.style('display', 'flex');
+    chartCanvas.style('align-self', 'flex-end');
     
     
     frameRate(20);
@@ -61,6 +62,8 @@ function setup() {
     select('#drainRate').input(() => DRAIN_RATE = parseFloat(select('#drainRate').value()));
     select('#recoveryRate').input(() => RECOVERY_RATE = parseFloat(select('#recoveryRate').value()));
     select('#staggeredStart').changed(() => staggeredStart = select('#staggeredStart').checked());
+
+    select('#resetButton').mousePressed(resetSimulation);
 
     initializeColors();
     initializeBugs();
@@ -303,11 +306,18 @@ function windowResized() {
     CHART_WIDTH = chartDiv.elt.clientWidth;
     chartCanvas = createGraphics(CHART_WIDTH, CHART_HEIGHT);
     chartCanvas.parent("chart");
-    chartCanvas.style('display', 'block');
+    chartCanvas.style('display', 'flex');
+    chartCanvas.style('align-self', 'flex-end');
     
     initializeGrid();
     initializeColors();
     initializeBugs();
+}
+
+function resetSimulation() {
+    initializeColors();
+    initializeBugs();
+    initializeGrid();
 }
 
 class Lightbug {

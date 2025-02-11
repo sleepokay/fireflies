@@ -17,7 +17,6 @@ button {
   font-size: 13px;
   cursor: pointer;
   border-radius: 2px;
-  position: absolute;
 }
 
 button:hover {
@@ -33,42 +32,86 @@ button:active {
   height: 100%;
   background-color: #222;
   color: #fff;
-  padding: 10px;
+  /* padding: 10px; */
   box-sizing: border-box;
   flex-shrink: 0; /* Prevent the toolbar from shrinking */
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Ensure the chart is positioned at the bottom */
 }
 
 #toolbar h2 {
-  margin-top: 0;
+  margin-top: 15px;
   font-size: 1.2rem;
   margin-bottom: 50px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 #toolbar label {
   display: block;
   margin-bottom: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
-
 
 #toolbar input {
   display: block;
-  margin-bottom: 25px;
 }
 
 #toolbar input[type="number"] {
-  width: 100%;
   padding: 4px;
   box-sizing: border-box;
+  margin: 0 10px 25px 10px;
+  width: calc(100% - 20px);
 }
 
 #toolbar input[type="checkbox"] {
   margin-right: 5px;
+  background-color: #222; /* Dark background */
+  color: #fff; /* White color */
+  border: 1px solid #555; /* Border color */
+  appearance: none; /* Remove default checkbox styling */
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: top;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+#toolbar input[type="checkbox"]:checked {
+  background-color: #555; /* Background color when checked */
+}
+
+#toolbar input[type="checkbox"]::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="%23fff" d="M6.173 11.414l-3.536-3.536 1.414-1.414 2.122 2.122 4.95-4.95 1.414 1.414z"/></svg>');
+  background-size: 12px 12px;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0;
+}
+
+#toolbar input[type="checkbox"]:checked::before {
+  opacity: 1;
 }
 
 #toolbar input[type="checkbox"]#staggeredStart {
   display: inline-block;
   margin-right: 5px;
+  margin-top: 0px;
+  margin-bottom: 25px;
+  margin-left: 0px;
+}
+
+#staggeredStartLabel {
+  margin-top: 10px;
+  text-align: center;
 }
 
 #toolbar input[type="number"],
@@ -92,6 +135,8 @@ button:active {
   border: 1px solid #555;
   margin-bottom: 10px;
   box-sizing: border-box;
+  margin: 0 10px 25px 10px;
+  width: calc(100% - 20px);
 }
 
 #chart {
@@ -100,6 +145,7 @@ button:active {
   background-color: #101017;
   margin-top: 50px;
   display: flex;
+  align-self: flex-end; /* Align the chart to the bottom of the toolbar */
 }
 
 #canvasContainer {
@@ -112,7 +158,19 @@ button:active {
   top: 0px;
   left: 180px;
   font-weight: bold;
-  padding: 10px 5px;
+  padding: 16px 6px;
   z-index: 1500;
   border-radius: 0px;
+}
+
+#resetButton {
+  width: 150px;
+  margin: 0px auto;
+  margin-top: 15px;
+  font-weight: bold;
+  padding: 8px 5px;
+  z-index: 1500;
+  border-radius: 2px;
+  color: #fff; /* White color */
+  border: 1px solid #555; /* Border color */
 }
