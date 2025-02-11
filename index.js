@@ -1,33 +1,49 @@
 let bugs = [];
 let nextBugs = [];
 let grid = [];
+
+let chartCanvas;
+let chartData = {};
+let activeCounts = {};
+
 const MAX_ENERGY = 8;
 const DIAMETER = 5;
-const LIGHT_RADIUS = 25;
-const GRID_SIZE = 60;
+const LIGHT_RADIUS = 30;
+const GRID_SIZE = 2 * LIGHT_RADIUS + 5;
+const CHART_HEIGHT = 100;
+const CHART_WIDTH = 300;
+const TOTAL_BUGS = 6000;
+const STARTING_ACTIVE = 0.005;
+const RANDOM_WALK_SCALE = 1;
 
+let colorSets = [
+    ['#D3DD55'],
+    ['#F40', '#1D3', '#06F'],
+];
+let currentColorSetIndex = 0;
+let colors = colorSets[currentColorSetIndex];
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
+    chartCanvas = createGraphics(CHART_WIDTH, CHART_HEIGHT);
     frameRate(20);
 
-    let colors = ['#D3DD55'];
+    let switchButton = createButton('Colors');
+    switchButton.position(5, windowHeight - 130);
+    switchButton.mousePressed(switchColors);
 
-    for (let i = 0; i < 5000; i++) {
-        let active = random() < 0.05;
-        let c = random(colors);
-        let bug = new Lightbug(random(windowWidth), random(windowHeight), active, c, random(MAX_ENERGY));
-        let nextBug = new Lightbug(bug.x, bug.y, bug.active, c, bug.energy);
-        bugs.push(bug);
-        nextBugs.push(nextBug);
-    }
+    initializeColors();
+    initializeBugs();
     initializeGrid();
 }
-
 
 function draw() {
     background(color("#102124"));
     updateGrid();
+
+    Object.keys(activeCounts).forEach(color => {
+        activeCounts[color] = 0;
+    });
 
     bugs.forEach(lightbug => {
         if (lightbug.active) {
@@ -35,6 +51,7 @@ function draw() {
             c.setAlpha(255 * (lightbug.energy / MAX_ENERGY));
             fill(c);
             ellipse(lightbug.x, lightbug.y, DIAMETER);
+            activeCounts[lightbug.color]++;
         } else {
             noFill();
             ellipse(lightbug.x, lightbug.y, DIAMETER);
@@ -42,8 +59,48 @@ function draw() {
     });
 
     update();
-
     swapBugs();
+    drawChart();
+}
+
+function initializeColors() {
+    chartData = {};
+    activeCounts = {};
+    colors.forEach(color => {
+        chartData[color] = Array(CHART_WIDTH).fill(0);
+        activeCounts[color] = 0;
+    });
+}
+
+function switchColors() {
+    currentColorSetIndex = (currentColorSetIndex + 1) % colorSets.length;
+    colors = colorSets[currentColorSetIndex];
+    initializeColors();
+    initializeBugs();
+}
+
+function initializeBugs() {
+    bugs = [];
+    nextBugs = [];
+    for (let i = 0; i < TOTAL_BUGS; i++) {
+        let active = random() < STARTING_ACTIVE;
+        let c = random(colors);
+
+        let bug = new Lightbug(
+            random(windowWidth),
+            random(windowHeight),
+            active,
+            c,
+            random(MAX_ENERGY));
+        let nextBug = new Lightbug(
+            bug.x,
+            bug.y,
+            bug.active,
+            c,
+            bug.energy);
+        bugs.push(bug);
+        nextBugs.push(nextBug);
+    }
 }
 
 function update() {
@@ -56,34 +113,42 @@ function update() {
         }
 
         let nextBug = nextBugs[i];
-        nextBug.x = lightbug.x + random(-1, 1);
-        nextBug.y = lightbug.y + random(-1, 1);
+        nextBug.x = (lightbug.x + random(-RANDOM_WALK_SCALE, RANDOM_WALK_SCALE) + windowWidth) % windowWidth;
+        nextBug.y = (lightbug.y + random(-RANDOM_WALK_SCALE, RANDOM_WALK_SCALE) + windowHeight) % windowHeight;
         nextBug.active = lightbug.active;
         nextBug.color = majorityColor;
         nextBug.energy = lightbug.energy;
 
         if (litNeighbors.length >= 1 && lightbug.energy >= MAX_ENERGY) {
             nextBug.active = true;
+            nextBug.energy = MAX_ENERGY;
             nextBug.energy--;
-        } else if (lightbug.active && lightbug.energy > 0) {
+        } 
+        else if (lightbug.active && lightbug.energy > 0) {
             nextBug.active = true;
             nextBug.energy--;
-        } else if (!lightbug.active && lightbug.energy < MAX_ENERGY) {
+        } 
+        else if (!lightbug.active && lightbug.energy < MAX_ENERGY) {
             nextBug.active = false;
-            nextBug.energy++;
-        } else if (lightbug.energy <= 0) {
+            nextBug.energy += 1.5;
+        } 
+        else if (lightbug.energy <= 0) {
             nextBug.active = false;
         }
     }
 }
 
-// We use a grid to index bugs for faster neighbor lookups
-function initializeGrid() {
-    let cols = Math.ceil(windowWidth / GRID_SIZE);
-    let rows = Math.ceil(windowHeight / GRID_SIZE);
-    grid = Array.from({ length: cols }, () => Array.from({ length: rows }, () => []));
+function swapBugs() {
+    let temp = bugs;
+    bugs = nextBugs;
+    nextBugs = temp;
 }
 
+function initializeGrid() {
+    let cols = Math.ceil(windowWidth / GRID_SIZE);
+    let rows = Math.ceil((windowHeight) / GRID_SIZE);
+    grid = Array.from({ length: cols }, () => Array.from({ length: rows }, () => []));
+}
 
 function updateGrid() {
     grid.forEach(col => col.forEach(cell => cell.length = 0));
@@ -95,7 +160,6 @@ function updateGrid() {
         }
     });
 }
-
 
 function getLitNeighbors(bug) {
     let neighbors = [];
@@ -121,7 +185,6 @@ function getLitNeighbors(bug) {
     return neighbors;
 }
 
-
 function getMajorityColor(neighbors) {
     let colorCount = {};
     neighbors.forEach(neighbor => {
@@ -143,13 +206,28 @@ function getMajorityColor(neighbors) {
     return maxKey;
 }
 
+function drawChart() {
+    chartCanvas.background(color("#101017"));
+    Object.keys(chartData).forEach(color => {
+        chartData[color].push(activeCounts[color]);
 
-function swapBugs() {
-    let temp = bugs;
-    bugs = nextBugs;
-    nextBugs = temp;
+        if (chartData[color].length > CHART_WIDTH) {
+            chartData[color].shift();
+        }
+
+        chartCanvas.stroke(color); // Use the color for the chart line
+        chartCanvas.noFill();
+        chartCanvas.beginShape();
+        for (let i = 0; i < chartData[color].length; i++) {
+            let x = i;
+            let y = map(chartData[color][i], 0, TOTAL_BUGS, CHART_HEIGHT, 0);
+            chartCanvas.vertex(x, y);
+        }
+        chartCanvas.endShape();
+    });
+
+    image(chartCanvas, 0, windowHeight - CHART_HEIGHT);
 }
-
 
 class Lightbug {
     constructor(x, y, active, color, energy) {
