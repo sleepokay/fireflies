@@ -2,6 +2,8 @@ let bugs = [];
 let nextBugs = [];
 let grid = [];
 
+const CHART_HEIGHT = 75;
+let CHART_WIDTH = 200;
 let chartCanvas;
 let chartData = {};
 let activeCounts = {};
@@ -10,17 +12,17 @@ let mX = 0;
 let mY = 0;
 let mouseIsPressed = false;
 
+let LIGHT_RADIUS = 27;
+let TOTAL_BUGS = 5000;
+let STARTING_ACTIVE = 0.005;
+let RANDOM_WALK_SCALE = 2;
+let DRAIN_RATE = 0.1;
+let RECOVERY_RATE = 0.08;
+
+
+const GRID_SIZE = 2 * LIGHT_RADIUS + 5;
 const MAX_ENERGY = 1;
 const DIAMETER = 5;
-const LIGHT_RADIUS = 27;
-const GRID_SIZE = 2 * LIGHT_RADIUS + 5;
-const CHART_HEIGHT = 100;
-const CHART_WIDTH = 300;
-const TOTAL_BUGS = 5000;
-const STARTING_ACTIVE = 0.005;
-const RANDOM_WALK_SCALE = 2;
-const DRAIN_RATE = 0.1;
-const RECOVERY_RATE = 0.08;
 
 let colorSets = [
     ['#D3DD55'],
@@ -31,17 +33,40 @@ let currentColorSetIndex = 0;
 let colors = colorSets[currentColorSetIndex];
 
 function setup() {
-    createCanvas(windowWidth, windowHeight);
+    let canvasContainer = select('#canvasContainer');
+    let cnv = createCanvas(windowWidth, windowHeight);
+    cnv.parent(canvasContainer);
+
+    let chartDiv = select('#chart');
+    CHART_WIDTH = chartDiv.elt.clientWidth;
     chartCanvas = createGraphics(CHART_WIDTH, CHART_HEIGHT);
+    chartCanvas.parent("chart");
+    chartCanvas.style('display', 'block');
+    
+    
     frameRate(20);
 
-    let switchButton = createButton('Colors');
-    switchButton.position(5, windowHeight - 130);
-    switchButton.mousePressed(switchColors);
+    let colorSetDropdown = select('#colorSet');
+    colorSetDropdown.changed(() => {
+        currentColorSetIndex = parseInt(colorSetDropdown.value());
+        colors = colorSets[currentColorSetIndex];
+        initializeColors();
+        initializeBugs();
+    });
+
+    select('#totalBugs').input(() => TOTAL_BUGS = parseInt(select('#totalBugs').value()));
+    select('#lightRadius').input(() => LIGHT_RADIUS = parseInt(select('#lightRadius').value()));
+    select('#startingActive').input(() => STARTING_ACTIVE = parseFloat(select('#startingActive').value()));
+    select('#randomWalkScale').input(() => RANDOM_WALK_SCALE = parseInt(select('#randomWalkScale').value()));
+    select('#drainRate').input(() => DRAIN_RATE = parseFloat(select('#drainRate').value()));
+    select('#recoveryRate').input(() => RECOVERY_RATE = parseFloat(select('#recoveryRate').value()));
+    select('#staggeredStart').changed(() => staggeredStart = select('#staggeredStart').checked());
 
     initializeColors();
     initializeBugs();
     initializeGrid();
+
+    window.addEventListener('resize', windowResized);
 }
 
 function draw() {
@@ -114,7 +139,7 @@ function update() {
     if (mouseIsPressed) {
         let mX = Math.floor(mouseX / GRID_SIZE);
         let mY = Math.floor(mouseY / GRID_SIZE);
-
+        console.log(mouseX, mouseY);
         for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
                 let newCol = mX + i;
@@ -124,6 +149,7 @@ function update() {
                         let distance = dist(mouseX, mouseY, lightbug.x, lightbug.y);
                         if (distance < LIGHT_RADIUS) {
                             lightbug.active = true;
+                            lightbug.color = random(colors);
                             lightbug.energy = MAX_ENERGY-DRAIN_RATE;
                         }
                     });
@@ -244,18 +270,16 @@ function drawChart() {
             chartData[color].shift();
         }
 
-        chartCanvas.stroke(color); // Use the color for the chart line
+        chartCanvas.stroke(color);
         chartCanvas.noFill();
         chartCanvas.beginShape();
         for (let i = 0; i < chartData[color].length; i++) {
             let x = i;
-            let y = map(chartData[color][i], 0, TOTAL_BUGS, CHART_HEIGHT, 0);
+            let y = map(chartData[color][i], TOTAL_BUGS/CHART_HEIGHT, TOTAL_BUGS, CHART_HEIGHT, 0);
             chartCanvas.vertex(x, y);
         }
         chartCanvas.endShape();
     });
-
-    image(chartCanvas, 0, windowHeight - CHART_HEIGHT);
 }
 
 function mousePressed(event) {
@@ -268,6 +292,22 @@ function mousePressed(event) {
     mX = mouseX;
     mY = mouseY;
     mouseIsPressed = true;
+}
+
+function windowResized() {
+    let canvasContainer = select('#canvasContainer');
+    resizeCanvas(windowWidth, windowHeight);
+    
+    let chartDiv = select('#chart');
+    chartDiv.html('');
+    CHART_WIDTH = chartDiv.elt.clientWidth;
+    chartCanvas = createGraphics(CHART_WIDTH, CHART_HEIGHT);
+    chartCanvas.parent("chart");
+    chartCanvas.style('display', 'block');
+    
+    initializeGrid();
+    initializeColors();
+    initializeBugs();
 }
 
 class Lightbug {

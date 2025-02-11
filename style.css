@@ -3,4 +3,116 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-size: 0.9rem;
+  display: flex; /* Use flexbox layout */
+}
+
+button {
+  background-color: #222;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 2px;
+  position: absolute;
+}
+
+button:hover {
+  background-color: #555;
+}
+
+button:active {
+  background-color: #777;
+}
+
+#toolbar {
+  width: 200px;
+  height: 100%;
+  background-color: #222;
+  color: #fff;
+  padding: 10px;
+  box-sizing: border-box;
+  flex-shrink: 0; /* Prevent the toolbar from shrinking */
+  z-index: 1000;
+}
+
+#toolbar h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  margin-bottom: 50px;
+}
+
+#toolbar label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+
+#toolbar input {
+  display: block;
+  margin-bottom: 25px;
+}
+
+#toolbar input[type="number"] {
+  width: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+#toolbar input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+#toolbar input[type="checkbox"]#staggeredStart {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+#toolbar input[type="number"],
+#toolbar input[type="checkbox"] {
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+#toolbar input[type="number"]::placeholder {
+  color: #bbb;
+}
+
+#toolbar select {
+  width: 100%;
+  padding: 4px;
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #555;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+#chart {
+  width: 100%;
+  height: 75px;
+  background-color: #101017;
+  margin-top: 50px;
+  display: flex;
+}
+
+#canvasContainer {
+  flex-grow: 1; /* Allow the canvas container to grow and fill the remaining space */
+  position: relative;
+}
+
+#toggleButton {
+  position: absolute;
+  top: 0px;
+  left: 180px;
+  font-weight: bold;
+  padding: 10px 5px;
+  z-index: 1500;
+  border-radius: 0px;
 }
