@@ -6,7 +6,7 @@ body {
   font-family: Helvetica, Arial, sans-serif;
   font-weight: 400;
   font-size: 0.9rem;
-  display: flex; /* Use flexbox layout */
+  display: flex;
 }
 
 button {
@@ -32,13 +32,11 @@ button:active {
   height: 100%;
   background-color: #222;
   color: #fff;
-  /* padding: 10px; */
   box-sizing: border-box;
-  flex-shrink: 0; /* Prevent the toolbar from shrinking */
+  flex-shrink: 0;
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Ensure the chart is positioned at the bottom */
 }
 
 #toolbar h2 {
@@ -59,7 +57,7 @@ button:active {
 #toolbar input,
 #toolbar select {
   display: block;
-  margin-bottom: 10px; /* Reduce the margin to minimize spacing */
+  margin-bottom: 10px;
   margin-left: 10px;
   margin-right: 10px;
 }
@@ -73,10 +71,10 @@ button:active {
 
 #toolbar input[type="checkbox"] {
   margin-right: 5px;
-  background-color: #222; /* Dark background */
-  color: #fff; /* White color */
-  border: 1px solid #555; /* Border color */
-  appearance: none; /* Remove default checkbox styling */
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #555;
+  appearance: none;
   width: 16px;
   height: 16px;
   display: inline-block;
@@ -86,7 +84,7 @@ button:active {
 }
 
 #toolbar input[type="checkbox"]:checked {
-  background-color: #555; /* Background color when checked */
+  background-color: #555;
 }
 
 #toolbar input[type="checkbox"]::before {
@@ -144,16 +142,18 @@ button:active {
 }
 
 #chart {
+  position: absolute;
   width: 100%;
   height: 75px;
   background-color: #101017;
   display: flex;
-  align-self: flex-end; /* Align the chart to the bottom of the toolbar */
-  margin-bottom: 5px; /* Add margin to position it 5px higher */
+  align-self: flex-end;
+  margin-bottom: 0px;
+  bottom: 0;
 }
 
 #canvasContainer {
-  flex-grow: 1; /* Allow the canvas container to grow and fill the remaining space */
+  flex-grow: 1;
   position: relative;
 }
 
@@ -168,6 +168,7 @@ button:active {
 }
 
 #resetButton {
+  display: inline-block;
   width: 150px;
   margin: 0px auto;
   margin-top: 10px;
@@ -175,6 +176,15 @@ button:active {
   padding: 8px 5px;
   z-index: 1500;
   border-radius: 2px;
-  color: #fff; /* White color */
-  border: 1px solid #555; /* Border color */
+  color: #fff;
+  border: 1px solid #555;
+  align-self: center;
+}
+
+.settings-group {
+  display: block;
+}
+
+.settings-group-reset {
+  
 }

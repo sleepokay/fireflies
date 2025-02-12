@@ -52,7 +52,6 @@ function setup() {
         currentColorSetIndex = parseInt(colorSetDropdown.value());
         colors = colorSets[currentColorSetIndex];
         initializeColors();
-        initializeBugs();
     });
 
     select('#totalBugs').input(() => TOTAL_BUGS = parseInt(select('#totalBugs').value()));
@@ -61,7 +60,7 @@ function setup() {
     select('#randomWalkScale').input(() => RANDOM_WALK_SCALE = parseInt(select('#randomWalkScale').value()));
     select('#drainRate').input(() => DRAIN_RATE = parseFloat(select('#drainRate').value()));
     select('#recoveryRate').input(() => RECOVERY_RATE = parseFloat(select('#recoveryRate').value()));
-    select('#staggeredStart').changed(() => staggeredStart = select('#staggeredStart').checked());
+    // select('#staggeredStart').changed(() => staggeredStart = select('#staggeredStart').checked());
 
     select('#resetButton').mousePressed(resetSimulation);
 
@@ -75,6 +74,7 @@ function setup() {
 function draw() {
     background(color("#102124"));
     translate(-width / 2, -height / 2);
+    
     updateGrid();
 
     Object.keys(activeCounts).forEach(color => {
@@ -106,13 +106,10 @@ function initializeColors() {
         chartData[color] = Array(CHART_WIDTH).fill(0);
         activeCounts[color] = 0;
     });
-}
 
-function switchColors() {
-    currentColorSetIndex = (currentColorSetIndex + 1) % colorSets.length;
-    colors = colorSets[currentColorSetIndex];
-    initializeColors();
-    initializeBugs();
+    bugs.forEach(bug => {
+        bug.color = random(colors);
+    });
 }
 
 function initializeBugs() {
@@ -306,8 +303,6 @@ function windowResized() {
     CHART_WIDTH = chartDiv.elt.clientWidth;
     chartCanvas = createGraphics(CHART_WIDTH, CHART_HEIGHT);
     chartCanvas.parent("chart");
-    chartCanvas.style('display', 'flex');
-    chartCanvas.style('align-self', 'flex-end');
     
     initializeGrid();
     initializeColors();
