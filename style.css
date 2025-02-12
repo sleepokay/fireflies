@@ -44,7 +44,7 @@ button:active {
 #toolbar h2 {
   margin-top: 15px;
   font-size: 1.2rem;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
   margin-left: 10px;
   margin-right: 10px;
 }
@@ -56,14 +56,18 @@ button:active {
   margin-right: 10px;
 }
 
-#toolbar input {
+#toolbar input,
+#toolbar select {
   display: block;
+  margin-bottom: 10px; /* Reduce the margin to minimize spacing */
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 #toolbar input[type="number"] {
   padding: 4px;
   box-sizing: border-box;
-  margin: 0 10px 25px 10px;
+  margin: 0 10px 20px 10px;
   width: calc(100% - 20px);
 }
 
@@ -105,7 +109,7 @@ button:active {
   display: inline-block;
   margin-right: 5px;
   margin-top: 0px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   margin-left: 0px;
 }
 
@@ -135,7 +139,7 @@ button:active {
   border: 1px solid #555;
   margin-bottom: 10px;
   box-sizing: border-box;
-  margin: 0 10px 25px 10px;
+  margin: 0 10px 20px 10px;
   width: calc(100% - 20px);
 }
 
@@ -143,9 +147,9 @@ button:active {
   width: 100%;
   height: 75px;
   background-color: #101017;
-  margin-top: 50px;
   display: flex;
   align-self: flex-end; /* Align the chart to the bottom of the toolbar */
+  margin-bottom: 5px; /* Add margin to position it 5px higher */
 }
 
 #canvasContainer {
@@ -166,7 +170,7 @@ button:active {
 #resetButton {
   width: 150px;
   margin: 0px auto;
-  margin-top: 15px;
+  margin-top: 10px;
   font-weight: bold;
   padding: 8px 5px;
   z-index: 1500;

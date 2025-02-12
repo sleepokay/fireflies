@@ -34,7 +34,7 @@ let colors = colorSets[currentColorSetIndex];
 
 function setup() {
     let canvasContainer = select('#canvasContainer');
-    let cnv = createCanvas(windowWidth, windowHeight);
+    let cnv = createCanvas(windowWidth, windowHeight, WEBGL);
     cnv.parent(canvasContainer);
 
     let chartDiv = select('#chart');
@@ -74,6 +74,7 @@ function setup() {
 
 function draw() {
     background(color("#102124"));
+    translate(-width / 2, -height / 2);
     updateGrid();
 
     Object.keys(activeCounts).forEach(color => {
@@ -142,7 +143,7 @@ function update() {
     if (mouseIsPressed) {
         let mX = Math.floor(mouseX / GRID_SIZE);
         let mY = Math.floor(mouseY / GRID_SIZE);
-        console.log(mouseX, mouseY);
+        
         for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
                 let newCol = mX + i;
@@ -278,7 +279,7 @@ function drawChart() {
         chartCanvas.beginShape();
         for (let i = 0; i < chartData[color].length; i++) {
             let x = i;
-            let y = map(chartData[color][i], TOTAL_BUGS/CHART_HEIGHT, TOTAL_BUGS, CHART_HEIGHT, 0);
+            let y = map(chartData[color][i], -10, TOTAL_BUGS, CHART_HEIGHT, 0);
             chartCanvas.vertex(x, y);
         }
         chartCanvas.endShape();
@@ -286,8 +287,7 @@ function drawChart() {
 }
 
 function mousePressed(event) {
-    let cnv = document.querySelector('canvas');
-
+    let cnv = document.querySelector('#defaultCanvas0');
     if (event.target !== cnv) {
         return;
     }
